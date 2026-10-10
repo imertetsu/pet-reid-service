@@ -1,0 +1,11 @@
+{
+  "description": "Fotos de ejemplo de la interfaz (conjunto de prueba, nunca usadas para entrenar). 'expected' documenta el resultado con PCA + LDA.",
+  "examples": [
+    {"path": "images/test/dfn_0835/05.jpg", "kind": "registrado", "expected": "reconoce a Bella"},
+    {"path": "images/test/dfn_1413/05.jpg", "kind": "registrado", "expected": "reconoce a Lucas con mucho margen (0,31)"},
+    {"path": "images/test/dfn_0222/08.jpg", "kind": "no registrado", "expected": "sin coincidencia"},
+    {"path": "images/test/dfn_0195/09.jpg", "kind": "no registrado", "expected": "sin coincidencia"},
+    {"path": "images/test/dfn_0222/03.jpg", "kind": "error: otro perro", "expected": "acepta por error a Pancho (falsa aceptación)"},
+    {"path": "images/test/dfn_1154/05.jpg", "kind": "error: no lo reconoce", "expected": "Simba sale primero pero sobre el umbral (falso rechazo)"}
+  ]
+}

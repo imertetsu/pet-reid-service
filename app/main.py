@@ -6,7 +6,6 @@ Run with ``python run.py`` (http://127.0.0.1:9100, docs at /docs).
 from __future__ import annotations
 
 import json
-import random
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
@@ -14,7 +13,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import settings
-from app.evaluate import METRICS_PATH, PREDICTIONS_PATH
+from app.evaluate import METRICS_PATH
 from app.images import ImageValidationError
 from app.service import METHOD_LABELS, ReidService
 from app.train import TRAINING_PATH
@@ -26,22 +25,26 @@ def read_json(path, default=None):
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
 
 
-def build_samples(selected: str) -> list[dict]:
-    """Example queries for the UI, chosen from the test predictions."""
-    rng = random.Random(settings.SEED)
-    predictions = read_json(PREDICTIONS_PATH, [])
-    groups = {
-        "registrado": [p for p in predictions if p["enrolled"] and p[selected]["correct"]],
-        "sin registro": [p for p in predictions if not p["enrolled"]],
-        "error del modelo": [p for p in predictions if not p[selected]["correct"]],
+DEMO_EXAMPLES_PATH = settings.DATA_DIR / "demo_examples.json"
+
+
+def build_samples() -> list[dict]:
+    """Curated example queries for the UI (test split, never used for training)."""
+    identity_by_path = {
+        r["path"]: r["identity"] for r in read_json(settings.MANIFEST_PATH, {"images": []})["images"]
     }
-    counts = {"registrado": 5, "sin registro": 4, "error del modelo": 3}
     samples = []
-    for kind, items in groups.items():
-        for p in rng.sample(items, min(counts[kind], len(items))):
-            samples.append({"kind": kind, "path": p["path"], "identity": p["identity"]})
-    for s in samples:
-        s["url"] = f"/media/data/{s['path']}"
+    for example in read_json(DEMO_EXAMPLES_PATH, {"examples": []})["examples"]:
+        if example["path"] not in identity_by_path:
+            continue
+        samples.append(
+            {
+                "kind": example["kind"],
+                "path": example["path"],
+                "identity": identity_by_path[example["path"]],
+                "url": f"/media/data/{example['path']}",
+            }
+        )
     return samples
 
 
@@ -49,7 +52,7 @@ def build_samples(selected: str) -> list[dict]:
 async def lifespan(app: FastAPI):
     service = ReidService()
     state["service"] = service
-    state["samples"] = build_samples(service.calibration["selected_method"])
+    state["samples"] = build_samples()
     yield
     state.clear()
 

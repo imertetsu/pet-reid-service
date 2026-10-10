@@ -163,3 +163,23 @@ def test_frontend_and_model_info(client):
     info = client.get("/api/model").json()
     assert set(info["methods"]) == {"baseline", "siamese", "pca_lda"}
     assert "test" in info["test"]["methods"]["baseline"]
+
+
+# ---- prepared demo -------------------------------------------------------------
+def test_demo_examples_behave_as_labeled(client, selected):
+    """The curated UI examples must keep the outcome their label promises."""
+    samples = client.get("/api/samples").json()
+    assert samples, "data/demo_examples.json should provide examples"
+    for sample in samples:
+        body = identify(client, sample["path"]).json()
+        top = body["candidates"][0]["pet_id"]
+        if sample["kind"] == "registrado":
+            assert body["accepted"] and top == sample["identity"], sample
+        elif sample["kind"] == "no registrado":
+            assert not body["accepted"], sample
+        elif sample["kind"] == "error: otro perro":
+            assert body["accepted"] and top != sample["identity"], sample
+        elif sample["kind"] == "error: no lo reconoce":
+            assert not body["accepted"] and top == sample["identity"], sample
+        else:
+            raise AssertionError(f"Unknown kind: {sample['kind']}")

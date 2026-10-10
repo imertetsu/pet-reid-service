@@ -1,18 +1,7 @@
 // Frontend for the pet re-identification microservice (vanilla JS).
 
 const $ = (selector) => document.querySelector(selector);
-const state = { file: null, sampleUrl: null, model: null };
-
-const METRIC_ROWS = [
-  ["top1", "Top-1", "pct"],
-  ["recall_at_3", "Recall@3", "pct"],
-  ["identification_rate", "Tasa de identificación (con umbral)", "pct"],
-  ["unknown_far", "Desconocidos aceptados (FAR)", "pct"],
-  ["known_wrong_accepted", "Registrados aceptados con otro perro", "int"],
-  ["roc_auc", "ROC-AUC (verificación)", "num"],
-  ["eer", "EER (verificación)", "pct"],
-  ["threshold", "Umbral (de validación)", "num"],
-];
+const state = { file: null, sampleUrl: null };
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -236,55 +225,12 @@ async function loadGallery() {
   }
 }
 
-// ---- model --------------------------------------------------------------
-function format(value, kind) {
-  if (value === undefined || value === null) return "—";
-  if (kind === "pct") return `${(100 * value).toFixed(1)} %`;
-  if (kind === "num") return value.toFixed(3);
-  return String(value);
-}
-
-function metricsTable(byMethod, selected) {
-  const methods = Object.keys(byMethod);
-  const header = methods.map((m) => `<th>${escapeHtml(state.model.methods[m])}${m === selected ? " ★" : ""}</th>`).join("");
-  const rows = METRIC_ROWS.map(([key, label, kind]) => {
-    const cells = methods.map((m) => {
-      const r = byMethod[m];
-      // Without unknown queries the false acceptance rate is undefined
-      const value = key === "unknown_far" && r.retrieval.unknown_queries === 0
-        ? null
-        : key in r.retrieval ? r.retrieval[key] : r.verification[key];
-      return `<td>${format(value, kind)}</td>`;
-    }).join("");
-    return `<tr><td>${label}</td>${cells}</tr>`;
-  }).join("");
-  return `<div class="table-wrap"><table><thead><tr><th>Métrica</th>${header}</tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-
-async function loadModel() {
+// ---- method selector ------------------------------------------------------
+async function loadMethods() {
   const model = await api("/api/model");
-  state.model = model;
   $("#method").innerHTML = Object.entries(model.methods)
     .map(([key, label]) => `<option value="${key}" ${key === model.selected_method ? "selected" : ""}>${escapeHtml(label)}${key === model.selected_method ? " (elegido en validación)" : ""}</option>`)
     .join("");
-
-  const d = model.dataset;
-  const t = model.training;
-  const splits = d.splits || {};
-  $("#model-summary").innerHTML = `
-    <p><b>Problema:</b> dada la foto de un perro encontrado, buscar en la galería de mascotas registradas y sugerir la identidad o responder "sin coincidencia".</p>
-    <p><b>Dataset:</b> ${escapeHtml(d.source?.name)} (${escapeHtml(d.source?.authors)}, ${escapeHtml(d.source?.license)}).
-      ${d.filtering?.eligible_identities} identidades tras filtrar duplicados; partición por identidad:
-      entrenamiento ${splits.train?.identities}, validación ${splits.val?.identities}, prueba ${splits.test?.identities} perros.</p>
-    <p><b>Línea base:</b> ResNet50 (ImageNet, congelada) + distancia entre vectores normalizados. <b>Nada entrenado.</b></p>
-    <p><b>PCA + LDA (ML clásico):</b> ${escapeHtml(t.pca_lda?.pipeline)}; ${t.pca_lda?.selected_config?.lda_components} componentes LDA, entrenado con los perros de entrenamiento (scikit-learn ${escapeHtml(t.versions?.["scikit-learn"])}).</p>
-    <p><b>Cabeza siamesa:</b> ${escapeHtml(t.siamese?.head)} con pérdida contrastiva (dimensión ${t.siamese?.selected_config?.embedding_dim}, activación ${t.siamese?.selected_config?.activation ?? "lineal"}, ${escapeHtml(t.siamese?.optimizer?.name)} lr ${t.siamese?.optimizer?.learning_rate}); TensorFlow ${escapeHtml(t.versions?.tensorflow)}.</p>
-    <p><b>Método por defecto:</b> ${escapeHtml(model.methods[model.selected_method])} — regla: ${escapeHtml(model.selection_rule)}.</p>`;
-
-  const test = model.test.methods || {};
-  const pick = (split) => Object.fromEntries(Object.entries(test).filter(([, v]) => v[split]).map(([m, v]) => [m, v[split]]));
-  $("#metrics-test").innerHTML = metricsTable(pick("test"), model.selected_method);
-  $("#metrics-val").innerHTML = metricsTable(model.validation, model.selected_method);
 }
 
 // ---- init ---------------------------------------------------------------
@@ -293,7 +239,7 @@ async function init() {
     const health = await api("/api/health");
     $("#server-status").textContent = `En línea · ${health.gallery_size} mascotas`;
     $("#server-status").className = "pill ok";
-    await Promise.all([loadModel(), loadSamples()]);
+    await Promise.all([loadMethods(), loadSamples()]);
   } catch (error) {
     $("#server-status").textContent = "Servidor no disponible";
     $("#server-status").className = "pill down";

@@ -298,7 +298,7 @@ async function main() {
   const commands = [
     ["python run.py", "abre http://127.0.0.1:9100 (API en /docs)"],
     ["docker compose up -d --build", "mismo servicio en un contenedor"],
-    ["python -m pytest -q", "28 pruebas: válido, difícil, inválido y flujo completo"],
+    ["python -m pytest -q", "29 pruebas: válido, difícil, inválido y flujo completo"],
   ];
   commands.forEach(([cmd, desc], i) => {
     const y = 2.95 + i * 1.0;

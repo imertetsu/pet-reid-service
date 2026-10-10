@@ -67,12 +67,13 @@ Si un antivirus o proxy inspecciona HTTPS y la construcción falla con `CERTIFIC
 
 ## Probar la interfaz
 
-1. **Buscar:** elige una foto de ejemplo y pulsa **Buscar coincidencia**. Los ejemplos se agrupan en registrado, sin registro y error del modelo.
+1. **Buscar:** elige una foto de ejemplo y pulsa **Buscar coincidencia**. Las 6 fotos de ejemplo son fijas (`data/demo_examples.json`): 2 registradas, 2 no registradas y 2 errores conocidos del modelo (acepta a otro perro; no reconoce a uno registrado).
 2. Revisa el candidato sugerido, su distancia frente al umbral y la **última ubicación simulada** del collar. **Simular nueva señal** mueve el collar.
 3. Cambia el **método** (línea base, siamesa, PCA + LDA) para comparar con la misma foto.
 4. **Registrar mascota:** sube 2–4 fotos de un perro y luego búscalo con otra foto.
-5. **Modelo y resultados:** tablas de prueba y validación, y figuras.
-6. **Límites:** qué no hace el sistema.
+5. Debajo del botón de búsqueda hay un aviso permanente con los **límites** de la solución.
+
+La carpeta [`demo/`](demo/) tiene fotos listas para subir (registrado, no registrado, errores, registro de una mascota nueva y archivos inválidos), con el resultado esperado de cada una en [`demo/LEEME.md`](demo/LEEME.md).
 
 Subidas aceptadas: PNG o JPEG, máximo 5 MB y 6 megapíxeles, mínimo 96 px por lado. El servicio **no detecta ni alinea rostros**: recorta el centro de la imagen.
 
@@ -160,7 +161,7 @@ Errores: 413 (más de 5 MB), 415 (no es PNG/JPEG), 422 (imagen pequeña, dañada
 ## Pruebas
 
 ```bash
-python -m pytest -q      # 28 pruebas
+python -m pytest -q      # 29 pruebas
 ```
 
 - **Caso válido:** un perro registrado se identifica, y el top-1 y la distancia de la API coinciden con la evaluación offline para los tres métodos.

@@ -50,18 +50,19 @@ PCA + LDA llega a 83,2 %: 10 puntos más que la línea base. Y el perro correcto
 El método y el umbral se eligieron solo con validación; la prueba se evaluó una sola vez, como un examen final.
 Ahora lo muestro funcionando."
 
-DEMO (antes de presentar: tener abierto http://127.0.0.1:9100 con "python run.py" o "docker compose up -d"):
-1. CASO VÁLIDO: primera foto de la fila 1 ("registrado") y pulsar "Buscar coincidencia".
+DEMO (antes de presentar: tener abierto http://127.0.0.1:9100 con "docker compose up -d" o "python run.py"):
+Las 6 fotos de ejemplo de la pestaña Buscar tienen etiqueta y siempre dan el mismo resultado.
+1. CASO VÁLIDO: foto con etiqueta "registrado" (la 1.ª) → "Buscar coincidencia".
    Resultado: reconoce a Bella (distancia 0,896 bajo el umbral 0,936).
    Decir: "Encontró a la mascota: la distancia está bajo el umbral. Aquí está su dueño y la última ubicación del collar." Pulsar "Simular nueva señal".
-2. PERRO DESCONOCIDO: PRIMERA foto de la fila 2 ("sin registro") y buscar.
-   Resultado: "Sin coincidencia" (0,969 sobre el umbral).
+2. PERRO DESCONOCIDO: foto "no registrado" (la 3.ª) → buscar.
+   Resultado: "Sin coincidencia" (Coco a 0,969, sobre el umbral).
    Decir: "Este perro no está registrado. El sistema no inventa un dueño: responde 'sin coincidencia'."
-3. LÍMITE (el error relevante que pide el enunciado): SEGUNDA foto de la fila 2 ("sin registro") y buscar.
+3. LÍMITE (el error relevante que pide el enunciado): foto "error: otro perro" → buscar.
    Resultado: acepta por error a Pancho (0,822 bajo el umbral).
-   Decir: "Aquí falla: este perro no está registrado, pero se parece muchísimo a Pancho, mismo pelaje gris y rizado, y el sistema lo acepta. Es una falsa aceptación, el 8,8 % que mencioné. Por eso la coincidencia es solo una sugerencia que se confirma con el dueño, y se muestran 3 candidatos."
-4. (Si hay tiempo) Las fotos "error del modelo" de la fila 3 son perros registrados que el sistema NO reconoce: responde "sin coincidencia" aunque sí están en la galería (falso rechazo).
-NO usar como "caso desconocido" la segunda foto de la fila 2: es justamente la que falla.
+   Decir: "Aquí falla: este perro no está registrado, pero se parece muchísimo a Pancho, mismo pelaje gris y rizado, y el sistema lo acepta. Es una falsa aceptación, el 8,8 % que mencioné. Por eso la coincidencia es solo una sugerencia y se muestran 3 candidatos."
+4. (Si hay tiempo) foto "error: no lo reconoce": Simba está registrado y sale primero, pero 1,047 supera el umbral → "sin coincidencia" (falso rechazo).
+5. (Si hay tiempo) Subir una foto propia: recuadro "Arrastra una imagen o haz clic para elegir". Fotos listas en la carpeta demo/ del proyecto (ver demo/LEEME.md): registrado (Mia), no registrado, errores, registro de una mascota nueva y archivos inválidos.
 PLAN B si algo falla: mostrar las capturas del informe (figuras 2, 3 y 4).
 
 CONCEPTOS:
@@ -89,7 +90,7 @@ CONCEPTOS:
 const slide5 = `TIEMPO: ~20 segundos
 
 QUÉ DECIR:
-"Todo el código está en el repositorio con el tag v1.0. Con 'python run.py' o con Docker se levanta el sistema completo, y hay 28 pruebas automatizadas que cubren un caso válido, casos difíciles, entradas inválidas y el flujo completo. Muchas gracias, quedo atento a sus preguntas."
+"Todo el código está en el repositorio con el tag v1.0. Con 'python run.py' o con Docker se levanta el sistema completo, y hay 29 pruebas automatizadas que cubren un caso válido, casos difíciles, entradas inválidas y el flujo completo. Muchas gracias, quedo atento a sus preguntas."
 
 DIAPOSITIVAS DE RESPALDO (ocultas, no se muestran al presentar): 7 = glosario, 8 = preguntas frecuentes. Para ir a una durante la presentación: escribir su número y Enter.
 

@@ -22,8 +22,6 @@
     <button class="tab active" data-tab="search">Buscar</button>
     <button class="tab" data-tab="register">Registrar mascota</button>
     <button class="tab" data-tab="gallery">Galería</button>
-    <button class="tab" data-tab="model">Modelo y resultados</button>
-    <button class="tab" data-tab="limits">Límites</button>
   </nav>
 
   <div id="error-banner" class="banner error" hidden></div>
@@ -50,6 +48,14 @@
             <select id="method"></select>
           </div>
           <button id="search-btn" class="primary" disabled>Buscar coincidencia</button>
+          <div class="limits">
+            <strong>Límites de la solución</strong>
+            <ul>
+              <li>Solo funciona con la <b>cara de un perro centrada</b>: no detecta ni alinea rostros (no sirve para gatos ni fotos de cuerpo completo).</li>
+              <li>Puede confundir perros de raza y pelaje casi idénticos: una coincidencia es una <b>sugerencia</b> que se confirma con el dueño.</li>
+              <li>Nombres, dueños, collares y ubicaciones son <b>ficticios</b>. Prototipo académico, no validado para uso real.</li>
+            </ul>
+          </div>
         </div>
 
         <div class="card" id="result-card">
@@ -96,41 +102,6 @@
       </div>
     </section>
 
-    <!-- Model -->
-    <section id="tab-model" class="panel">
-      <div class="card">
-        <h2>Modelo y resultados</h2>
-        <div id="model-summary"></div>
-      </div>
-      <div class="card">
-        <h3>Resultados en prueba (evaluada una sola vez)</h3>
-        <div id="metrics-test"></div>
-        <h3>Validación (usada para elegir el método y el umbral)</h3>
-        <div id="metrics-val"></div>
-      </div>
-      <div class="card figures">
-        <img src="/media/figures/roc_test.png" alt="Curva ROC en prueba">
-        <img src="/media/figures/recall_at_k_test.png" alt="Recall@k en prueba">
-        <img src="/media/figures/distances_test.png" alt="Distribución de distancias en prueba" class="wide">
-      </div>
-    </section>
-
-    <!-- Limits -->
-    <section id="tab-limits" class="panel">
-      <div class="card prose">
-        <h2>Límites de la solución</h2>
-        <ul>
-          <li>Funciona con <b>rostros de perro</b> centrados. No detecta ni alinea caras: recorta el centro de la imagen. Gatos, varias mascotas o escenas amplias pueden dar resultados erróneos aunque pasen el umbral.</li>
-          <li>El modelo se entrenó con caras alineadas de DogFaceNet. Una foto de celular sin recortar ni alinear (cuerpo completo, otro encuadre) cambia de dominio y puede fallar aunque el perro esté registrado.</li>
-          <li>La distancia no es una probabilidad. El umbral se calibró en validación para aceptar como máximo un 5 % de perros sin registro.</li>
-          <li>Una coincidencia es una <b>sugerencia</b>: debe confirmarse con el dueño antes de entregar una mascota.</li>
-          <li>Nombres, dueños, collares y ubicaciones son ficticios; la integración real con <em>Pets Location</em> queda como trabajo futuro.</li>
-          <li>Prototipo académico: no está validado para uso en producción.</li>
-        </ul>
-        <h3>Fuentes</h3>
-        <p>Fotos: DogFaceNet (Mougeot, Li y Jia, 2019), DOI 10.5281/zenodo.12578449, licencia CC BY 4.0. Extractor: ResNet50 con pesos ImageNet de Keras.</p>
-      </div>
-    </section>
   </main>
 
   <script src="/static/app.js"></script>

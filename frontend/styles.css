@@ -231,3 +231,7 @@ tr.selected td { font-weight: 600; }
 @media (max-width: 860px) { .figures { grid-template-columns: 1fr; } }
 
 .prose li { margin-bottom: 8px; }
+
+.limits { margin-top: 16px; padding: 12px 14px; border-radius: 8px; background: var(--warn-bg); color: var(--warn); font-size: 0.85rem; }
+.limits ul { margin: 6px 0 0; padding-left: 18px; }
+.limits li { margin-bottom: 4px; }
