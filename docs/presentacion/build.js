@@ -1,4 +1,4 @@
-// Builds the 5-slide presentation of the final project.
+// Builds the 6-slide presentation of the final project (plus 2 hidden backup slides).
 // Usage: npm install && node build.js  ->  presentacion-ml.pptx
 const path = require("path");
 const pptxgen = require("pptxgenjs");
@@ -84,6 +84,42 @@ async function main() {
   // ---- 2. how it works ------------------------------------------------------
   pres.addSection({ title: "Solución" });
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Solución" });
+  s.addText("Una foto basta para sugerir al dueño y ubicar el collar", { placeholder: "title" });
+  const steps = [
+    ["Foto", "Quien encuentra al perro sube una foto de su cara"],
+    ["ResNet50", "Red ya entrenada con más de 1 millón de fotos: convierte la foto en 2.048 números"],
+    ["PCA + LDA", "Lo que se entrenó: aprende qué distingue a cada perro y deja 128 números"],
+    ["Galería", "Mide la distancia a los 85 perros registrados y muestra los 3 más parecidos"],
+    ["Decisión", "Si el más parecido está bajo el umbral, sugiere al dueño y ubica el collar"],
+  ];
+  const cardW = 2.26, gap = 0.2, cardY = 1.45, cardH = 2.85;
+  steps.forEach(([head, desc], i) => {
+    const x = 0.6 + i * (cardW + gap);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: cardY, w: cardW, h: cardH, rectRadius: 0.12, fill: { color: COL.lt2 }, line: { type: "none" }, objectName: `step-card-${i + 1}` });
+    s.addShape(pres.shapes.OVAL, { x: x + 0.2, y: cardY + 0.2, w: 0.6, h: 0.6, fill: { color: i === 2 ? COL.accent1 : COL.dk2 }, line: { type: "none" }, objectName: `step-circle-${i + 1}` });
+    s.addText(String(i + 1), { x: x + 0.2, y: cardY + 0.2, w: 0.6, h: 0.6, fontSize: 18, bold: true, color: COL.lt1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `step-number-${i + 1}` });
+    s.addText(head, { x: x + 0.2, y: cardY + 0.95, w: cardW - 0.4, h: 0.45, fontSize: 18, bold: true, color: COL.dk2, margin: 0, isTextBox: true, objectName: `step-head-${i + 1}` });
+    s.addText(desc, { x: x + 0.2, y: cardY + 1.45, w: cardW - 0.4, h: 1.25, fontSize: 14, color: COL.dk1, valign: "top", margin: 0, isTextBox: true, objectName: `step-desc-${i + 1}` });
+  });
+  // Real example from the test split
+  const exY = 4.65, d = 1.95;
+  s.addImage({ path: img("images/test/dfn_0098/02.jpg"), x: 0.6, y: exY, w: d, h: d, rounding: true, altText: "Foto de consulta", objectName: "example-query" });
+  s.addImage({ path: img("images/test/dfn_0098/00.jpg"), x: 10.75, y: exY, w: d, h: d, rounding: true, altText: "Foto registrada en la galería", objectName: "example-match" });
+  s.addText(
+    [
+      { text: "Ejemplo real del conjunto de prueba", options: { fontSize: 12, color: COL.accent6, breakLine: true } },
+      { text: "distancia 0,74  <  umbral 0,94", options: { fontSize: 28, bold: true, color: COL.dk2, breakLine: true } },
+      { text: "Posible coincidencia: Rufo · collar GPS-003-RUFO", options: { fontSize: 16, color: COL.dk1, breakLine: true } },
+      { text: " ", options: { fontSize: 6, breakLine: true } },
+      { text: "Distancia: qué tan distintas son dos fotos (menor = más parecidas; no es un porcentaje).", options: { fontSize: 12, color: COL.accent6, breakLine: true } },
+      { text: "Umbral: distancia máxima para aceptar la coincidencia, calculada con validación.", options: { fontSize: 12, color: COL.accent6 } },
+    ],
+    { x: 2.85, y: exY, w: 7.6, h: d, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: "example-text" }
+  );
+  s.addNotes(NOTES[1]);
+
+  // ---- 3. architecture: training and use ------------------------------------
+  s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Solución" });
   s.addText("Se entrena una vez y se usa en cada búsqueda", { placeholder: "title" });
   // Two lanes: offline training (top) and online use (bottom). Colors tell what is trained.
   const boxW = 2.14, boxGap = 0.35, boxH = 1.4;
@@ -151,7 +187,7 @@ async function main() {
     ],
     { x: 0.6, y: 6.25, w: 12.1, h: 0.45, fontSize: 12, color: COL.accent6, valign: "middle", margin: 0, isTextBox: true, objectName: "definitions" }
   );
-  s.addNotes(NOTES[1]);
+  s.addNotes(NOTES[2]);
 
   // ---- 3. results ----------------------------------------------------------
   pres.addSection({ title: "Resultados" });
@@ -190,7 +226,7 @@ async function main() {
     {
     x: 8.6, y: 5.4, w: 4.1, h: 1.35, fontSize: 13, color: COL.accent6, valign: "top", margin: 0, isTextBox: true, objectName: "results-caption",
   });
-  s.addNotes(NOTES[2]);
+  s.addNotes(NOTES[3]);
 
   // ---- 4. conclusions and limitations ---------------------------------------
   pres.addSection({ title: "Cierre" });
@@ -247,7 +283,7 @@ async function main() {
     ],
     { x: 11.3, y: pairY, w: 1.25, h: pairD, fontSize: 12, color: COL.accent6, valign: "middle", margin: 0, isTextBox: true, objectName: "error-caption" }
   );
-  s.addNotes(NOTES[3]);
+  s.addNotes(NOTES[4]);
 
   // ---- 5. repository and how to run -----------------------------------------
   s = pres.addSlide({ masterName: "TITLE_DARK", sectionTitle: "Cierre" });
@@ -277,7 +313,7 @@ async function main() {
     ],
     { x: 0.7, y: 6.25, w: 11.9, h: 0.9, valign: "top", margin: 0, isTextBox: true, objectName: "closing-thanks" }
   );
-  s.addNotes(NOTES[4]);
+  s.addNotes(NOTES[5]);
 
   // ---- backup slides (hidden: only shown if someone asks) ---------------------
   pres.addSection({ title: "Respaldo" });
@@ -308,7 +344,7 @@ async function main() {
       border: { type: "solid", pt: 0.75, color: "D7E2DF" }, margin: 0.06, objectName: `glossary-table-${t + 1}`,
     });
   });
-  s.addNotes("Diapositiva oculta de respaldo: no aparece al presentar. Si preguntan por un término, ir aquí (en la vista del moderador, escribir el número 6 y Enter).");
+  s.addNotes("Diapositiva oculta de respaldo: no aparece al presentar. Si preguntan por un término, ir aquí (en la vista del moderador, escribir el número 7 y Enter).");
 
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Respaldo" });
   s.hidden = true;
@@ -333,7 +369,7 @@ async function main() {
       { x: x + 0.25, y: y + 0.12, w: 5.45, h: 1.36, valign: "top", margin: 0, paraSpaceAfter: 4, isTextBox: true, objectName: `faq-text-${i + 1}` }
     );
   });
-  s.addNotes("Diapositiva oculta de respaldo con las preguntas más probables. Hay más preguntas y respuestas en las notas de la diapositiva 5.");
+  s.addNotes("Diapositiva oculta de respaldo con las preguntas más probables. Hay más preguntas y respuestas en las notas de la diapositiva 6.");
 
   await pres.writeFile({ fileName: OUT });
   console.log("OK " + OUT);

@@ -1,5 +1,5 @@
 // Speaker notes (Spanish): script, timing, demo steps and key concepts per slide.
-// Total time: about 2 min of slides, 2 min of demo and 1 min of closing.
+// Total time: about 2 min of slides (1-4), 2 min of demo and 1 min of closing (5-6).
 
 const slide1 = `TIEMPO: ~20 segundos
 
@@ -11,12 +11,23 @@ CONCEPTOS:
 - Reidentificación: reconocer al mismo individuo (no la raza) en fotos distintas.
 - DogFaceNet: dataset público de fotos reales de caras de perros (CC BY 4.0); las fotos de la portada son de ahí.`;
 
-const slide2 = `TIEMPO: ~50 segundos
+const slide2 = `TIEMPO: ~30 segundos
 
 QUÉ DECIR:
 "El problema: alguien encuentra un perro y no sabe si está registrado ni quién es su dueño.
-El sistema tiene dos partes. Arriba, el entrenamiento, que se hace una sola vez: tomé 2.517 fotos de 338 perros de DogFaceNet. ResNet50, una red ya entrenada con ImageNet, convierte cada foto en 2.048 números; esa red no la entreno, la reutilizo (en azul oscuro). Lo que sí entreno está en naranja: PCA resume esos números a 512, y LDA, usando a qué perro pertenece cada foto, aprende qué distingue a un perro de otro y deja 128 números. Al final, con otros 113 perros de validación, calculo el umbral.
-Abajo, el uso, que ocurre en cada búsqueda: la foto encontrada pasa por la misma ResNet50 y por el PCA + LDA ya aprendidos, se compara con los 85 perros registrados, se muestran los 3 más parecidos, y si la distancia del primero está bajo el umbral se sugiere al dueño y la ubicación del collar.
+La solución funciona en 5 pasos: se sube la foto de la cara; ResNet50, una red ya entrenada, la convierte en 2.048 números; PCA + LDA, que es lo que entrené, la reduce a 128 números que distinguen a cada perro; se compara con los 85 perros registrados y se muestran los 3 más parecidos; y si el primero está bajo el umbral, se sugiere al dueño y la ubicación del collar.
+Abajo hay un caso real: la distancia es 0,74, menor que el umbral 0,94, así que sugiere a Rufo."
+
+CONCEPTOS:
+- Distancia: qué tan distintas son dos fotos. Pequeña = se parecen. NO es una probabilidad.
+- Umbral: distancia máxima para decir "es este perro". Se eligió con validación.
+- Candidatos: los perros registrados ordenados del más parecido al menos parecido; se muestran los 3 primeros.`;
+
+const slideArch = `TIEMPO: ~40 segundos
+
+QUÉ DECIR:
+"Así se construyó. El sistema tiene dos partes. Arriba, el entrenamiento, que se hace una sola vez: tomé 2.517 fotos de 338 perros de DogFaceNet. ResNet50, una red ya entrenada con ImageNet, convierte cada foto en 2.048 números; esa red no la entreno, la reutilizo (en verde oscuro). Lo que sí entreno está en naranja: PCA resume esos números a 512, y LDA, usando a qué perro pertenece cada foto, aprende qué distingue a un perro de otro y deja 128 números. Al final, con otros 113 perros de validación, calculo el umbral.
+Abajo, el uso, que ocurre en cada búsqueda: la foto encontrada pasa por la misma ResNet50 y por el PCA + LDA ya aprendidos, se compara con los perros registrados y se decide con el umbral.
 En total usé 4.168 fotos de 564 perros, separados por perro en entrenamiento (338), validación (113) y prueba (113). Así, ningún perro de la prueba se vio antes."
 
 CONCEPTOS:
@@ -29,7 +40,7 @@ CONCEPTOS:
 - Umbral: distancia máxima para decir "es este perro". Se eligió con validación.
 - Partición por perro: evita la fuga de datos (que el mismo perro esté en entrenamiento y en prueba).`;
 
-const slide3 = `TIEMPO: ~50 segundos + DEMO 2 minutos
+const slide3 = `TIEMPO: ~30 segundos + DEMO 2 minutos
 
 QUÉ DECIR:
 "Comparé tres métodos con el mismo conjunto de prueba.
@@ -80,7 +91,7 @@ const slide5 = `TIEMPO: ~20 segundos
 QUÉ DECIR:
 "Todo el código está en el repositorio con el tag v1.0. Con 'python run.py' o con Docker se levanta el sistema completo, y hay 28 pruebas automatizadas que cubren un caso válido, casos difíciles, entradas inválidas y el flujo completo. Muchas gracias, quedo atento a sus preguntas."
 
-DIAPOSITIVAS DE RESPALDO (ocultas, no se muestran al presentar): 6 = glosario, 7 = preguntas frecuentes. Para ir a una durante la presentación: escribir su número y Enter.
+DIAPOSITIVAS DE RESPALDO (ocultas, no se muestran al presentar): 7 = glosario, 8 = preguntas frecuentes. Para ir a una durante la presentación: escribir su número y Enter.
 
 POSIBLES PREGUNTAS (respuestas cortas):
 
@@ -109,4 +120,4 @@ Sobre el sistema
 - ¿Mejora con más datos? Sí: unos 2 puntos de Top-1 cada vez que se duplica la cantidad de perros, cada vez con menos ganancia.
 - ¿Qué mejorarías? Más perros, un detector de rostros y probar extractores más modernos.`;
 
-module.exports = [slide1, slide2, slide3, slide4, slide5];
+module.exports = [slide1, slide2, slideArch, slide3, slide4, slide5];

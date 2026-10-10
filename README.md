@@ -12,7 +12,7 @@ Microservicio independiente que forma parte de la visión de *Pets Location* (pr
 | Entregable | Ubicación |
 |---|---|
 | Informe técnico (PDF) | [`docs/informe/informe-tecnico.pdf`](docs/informe/informe-tecnico.pdf) |
-| Presentación (PPTX, con notas del orador) | [`docs/presentacion/presentacion-ml.pptx`](docs/presentacion/presentacion-ml.pptx) |
+| Presentación (PPTX: 6 diapositivas + 2 de respaldo, con notas del orador) | [`docs/presentacion/presentacion-ml.pptx`](docs/presentacion/presentacion-ml.pptx) |
 | Resultados de evaluación | [`artifacts/metrics.json`](artifacts/metrics.json) y [`figures/`](figures/) |
 | Modelo entrenado | [`artifacts/pca_lda.npz`](artifacts/pca_lda.npz), [`artifacts/siamese_head.weights.h5`](artifacts/siamese_head.weights.h5), [`artifacts/calibration.json`](artifacts/calibration.json) |
 | Dataset seleccionado | [`data/`](data/) (fotos, `manifest.json`, `dataset_info.json`) |
