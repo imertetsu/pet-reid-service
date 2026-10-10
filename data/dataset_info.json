@@ -1,0 +1,49 @@
+{
+  "source": {
+    "name": "DogFaceNet_224resized",
+    "authors": "Mougeot, G., Li, D. & Jia, S. (2019)",
+    "doi": "10.5281/zenodo.12578449",
+    "license": "CC BY 4.0",
+    "md5": "010c207e202bb499039452aa7363b015"
+  },
+  "seed": 42,
+  "raw": {
+    "identities": 1393,
+    "images": 8363
+  },
+  "filtering": {
+    "conflicting_identities_removed": 4,
+    "duplicate_images_removed": 99,
+    "min_photos_per_identity": 6,
+    "max_photos_per_identity": 10,
+    "eligible_identities": 564
+  },
+  "splits": {
+    "train": {
+      "identities": 338,
+      "enrolled_identities": 0,
+      "images": 2517,
+      "roles": {
+        "train": 2517
+      }
+    },
+    "val": {
+      "identities": 113,
+      "enrolled_identities": 85,
+      "images": 807,
+      "roles": {
+        "gallery": 170,
+        "query": 637
+      }
+    },
+    "test": {
+      "identities": 113,
+      "enrolled_identities": 85,
+      "images": 844,
+      "roles": {
+        "query": 674,
+        "gallery": 170
+      }
+    }
+  }
+}

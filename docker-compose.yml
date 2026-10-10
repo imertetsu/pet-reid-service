@@ -1,0 +1,16 @@
+services:
+  pet-reid:
+    build: .
+    image: pet-reid-service:1.0
+    ports:
+      - "9100:9100"
+    volumes:
+      - runtime:/srv/runtime   # pets registered during the demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9100/api/health')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+
+volumes:
+  runtime:

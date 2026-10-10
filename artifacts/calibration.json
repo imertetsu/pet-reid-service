@@ -1,0 +1,112 @@
+{
+  "selection_rule": "mayor Top-1 en validación; desempate por tasa de identificación",
+  "max_unknown_far": 0.05,
+  "selected_method": "pca_lda",
+  "siamese_config": {
+    "embedding_dim": 256,
+    "activation": null,
+    "margin": 0.5
+  },
+  "pca_lda_config": {
+    "lda_components": 128,
+    "shrinkage": "auto"
+  },
+  "methods": {
+    "baseline": {
+      "threshold": 0.6359732747077942,
+      "val": {
+        "retrieval": {
+          "known_queries": 449,
+          "unknown_queries": 188,
+          "top1": 0.8151447661469933,
+          "recall_at_3": 0.9242761692650334,
+          "identification_rate": 0.532293986636971,
+          "known_wrong_accepted": 12,
+          "known_rejected": 198,
+          "unknown_accepted": 9,
+          "unknown_far": 0.047872340425531915,
+          "threshold": 0.6359732747077942
+        },
+        "verification": {
+          "pairs": 54145,
+          "positive_pairs": 449,
+          "roc_auc": 0.9735474856720404,
+          "eer": 0.060143543392680354,
+          "tp": 244,
+          "fp": 51,
+          "fn": 205,
+          "tn": 53645,
+          "precision": 0.8271186440677966,
+          "recall": 0.5434298440979956,
+          "f1": 0.6559139784946236,
+          "far": 0.0009497914183551848,
+          "threshold": 0.6359732747077942
+        }
+      }
+    },
+    "siamese": {
+      "threshold": 0.19680479168891907,
+      "val": {
+        "retrieval": {
+          "known_queries": 449,
+          "unknown_queries": 188,
+          "top1": 0.8530066815144766,
+          "recall_at_3": 0.9510022271714922,
+          "identification_rate": 0.5946547884187082,
+          "known_wrong_accepted": 19,
+          "known_rejected": 163,
+          "unknown_accepted": 9,
+          "unknown_far": 0.047872340425531915,
+          "threshold": 0.19680479168891907
+        },
+        "verification": {
+          "pairs": 54145,
+          "positive_pairs": 449,
+          "roc_auc": 0.9928538554754176,
+          "eer": 0.04902585304119078,
+          "tp": 270,
+          "fp": 55,
+          "fn": 179,
+          "tn": 53641,
+          "precision": 0.8307692307692308,
+          "recall": 0.6013363028953229,
+          "f1": 0.6976744186046511,
+          "far": 0.001024284862932062,
+          "threshold": 0.19680479168891907
+        }
+      }
+    },
+    "pca_lda": {
+      "threshold": 0.9362074136734009,
+      "val": {
+        "retrieval": {
+          "known_queries": 449,
+          "unknown_queries": 188,
+          "top1": 0.8775055679287305,
+          "recall_at_3": 0.9599109131403119,
+          "identification_rate": 0.6146993318485523,
+          "known_wrong_accepted": 8,
+          "known_rejected": 165,
+          "unknown_accepted": 9,
+          "unknown_far": 0.047872340425531915,
+          "threshold": 0.9362074136734009
+        },
+        "verification": {
+          "pairs": 54145,
+          "positive_pairs": 449,
+          "roc_auc": 0.9941596061038833,
+          "eer": 0.03794540941198954,
+          "tp": 283,
+          "fp": 51,
+          "fn": 166,
+          "tn": 53645,
+          "precision": 0.8473053892215568,
+          "recall": 0.6302895322939867,
+          "f1": 0.722860791826309,
+          "far": 0.0009497914183551848,
+          "threshold": 0.9362074136734009
+        }
+      }
+    }
+  }
+}

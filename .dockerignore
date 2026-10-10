@@ -1,0 +1,9 @@
+.git
+.venv
+raw
+runtime
+docs
+tests
+**/__pycache__
+artifacts/features_*.npz
+*.zip

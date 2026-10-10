@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Encontré una mascota · Pets Location</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🐾</span>
+      <div>
+        <h1>Encontré una mascota</h1>
+        <p>Reidentificación de perros por foto · módulo de <em>Pets Location</em></p>
+      </div>
+    </div>
+    <span id="server-status" class="pill">Conectando…</span>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="search">Buscar</button>
+    <button class="tab" data-tab="register">Registrar mascota</button>
+    <button class="tab" data-tab="gallery">Galería</button>
+    <button class="tab" data-tab="model">Modelo y resultados</button>
+    <button class="tab" data-tab="limits">Límites</button>
+  </nav>
+
+  <div id="error-banner" class="banner error" hidden></div>
+
+  <main>
+    <!-- Search -->
+    <section id="tab-search" class="panel active">
+      <div class="grid-2">
+        <div class="card">
+          <h2>1. Elige o sube una foto</h2>
+          <p class="hint">Fotos de ejemplo del conjunto de prueba (no usadas para entrenar):</p>
+          <div id="samples" class="samples"></div>
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="file-input" accept="image/png,image/jpeg">
+            <span>Arrastra una imagen o <u>haz clic para elegir</u><br>
+              <small>PNG o JPEG · máx. 5 MB · mín. 96 px · una sola cara de perro, centrada</small></span>
+          </label>
+          <div id="preview" class="preview" hidden>
+            <img id="preview-img" alt="Foto seleccionada">
+            <span id="preview-label"></span>
+          </div>
+          <div class="row">
+            <label for="method">Método</label>
+            <select id="method"></select>
+          </div>
+          <button id="search-btn" class="primary" disabled>Buscar coincidencia</button>
+        </div>
+
+        <div class="card" id="result-card">
+          <h2>2. Resultado</h2>
+          <div id="result-empty" class="empty">Elige una foto y pulsa <b>Buscar coincidencia</b>.</div>
+          <div id="result-loading" class="loading" hidden><span class="spinner"></span>Analizando la imagen con el modelo…</div>
+          <div id="result" hidden>
+            <div id="decision" class="decision"></div>
+            <div id="location" class="location" hidden></div>
+            <h3>Candidatos más parecidos</h3>
+            <div id="candidates" class="candidates"></div>
+            <p class="note">La distancia <b>no es una probabilidad</b>: menor distancia = más parecido. Solo se sugiere el primer candidato si su distancia está bajo el umbral calibrado en validación.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Register -->
+    <section id="tab-register" class="panel">
+      <div class="grid-2">
+        <form id="register-form" class="card">
+          <h2>Registrar una mascota en la galería</h2>
+          <p class="hint">Sube de 2 a 4 fotos del rostro del mismo perro. Después búscalo con otra foto.</p>
+          <div class="row"><label for="alias">Nombre</label><input id="alias" maxlength="30" required></div>
+          <div class="row"><label for="owner">Dueño</label><input id="owner" maxlength="40" required></div>
+          <div class="row"><label for="photos">Fotos</label><input id="photos" type="file" accept="image/png,image/jpeg" multiple required></div>
+          <div id="register-previews" class="thumbs"></div>
+          <button id="register-btn" class="primary" type="submit">Registrar</button>
+          <div id="register-msg" class="msg" hidden></div>
+        </form>
+        <div class="card">
+          <h2>Registradas en esta demo</h2>
+          <div id="registered-list" class="list"><p class="empty">Aún no hay mascotas registradas.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="tab-gallery" class="panel">
+      <div class="card">
+        <h2>Galería de mascotas registradas</h2>
+        <p class="hint">Perros del conjunto de prueba (nunca usados para entrenar). Nombres, dueños, collares y ubicaciones son <b>ficticios</b>.</p>
+        <div id="gallery" class="gallery"></div>
+      </div>
+    </section>
+
+    <!-- Model -->
+    <section id="tab-model" class="panel">
+      <div class="card">
+        <h2>Modelo y resultados</h2>
+        <div id="model-summary"></div>
+      </div>
+      <div class="card">
+        <h3>Resultados en prueba (evaluada una sola vez)</h3>
+        <div id="metrics-test"></div>
+        <h3>Validación (usada para elegir el método y el umbral)</h3>
+        <div id="metrics-val"></div>
+      </div>
+      <div class="card figures">
+        <img src="/media/figures/roc_test.png" alt="Curva ROC en prueba">
+        <img src="/media/figures/recall_at_k_test.png" alt="Recall@k en prueba">
+        <img src="/media/figures/distances_test.png" alt="Distribución de distancias en prueba" class="wide">
+      </div>
+    </section>
+
+    <!-- Limits -->
+    <section id="tab-limits" class="panel">
+      <div class="card prose">
+        <h2>Límites de la solución</h2>
+        <ul>
+          <li>Funciona con <b>rostros de perro</b> centrados. No detecta ni alinea caras: recorta el centro de la imagen. Gatos, varias mascotas o escenas amplias pueden dar resultados erróneos aunque pasen el umbral.</li>
+          <li>El modelo se entrenó con caras alineadas de DogFaceNet. Una foto de celular sin recortar ni alinear (cuerpo completo, otro encuadre) cambia de dominio y puede fallar aunque el perro esté registrado.</li>
+          <li>La distancia no es una probabilidad. El umbral se calibró en validación para aceptar como máximo un 5 % de perros sin registro.</li>
+          <li>Una coincidencia es una <b>sugerencia</b>: debe confirmarse con el dueño antes de entregar una mascota.</li>
+          <li>Nombres, dueños, collares y ubicaciones son ficticios; la integración real con <em>Pets Location</em> queda como trabajo futuro.</li>
+          <li>Prototipo académico: no está validado para uso en producción.</li>
+        </ul>
+        <h3>Fuentes</h3>
+        <p>Fotos: DogFaceNet (Mougeot, Li y Jia, 2019), DOI 10.5281/zenodo.12578449, licencia CC BY 4.0. Extractor: ResNet50 con pesos ImageNet de Keras.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

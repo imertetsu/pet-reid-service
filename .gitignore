@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.env
+
+# Raw archives and feature caches are rebuilt by the scripts
+raw/
+*.zip
+artifacts/features_*.npz
+
+# Runtime data of the demo (registered pets)
+runtime/
+
+# Extra CA certificates for local HTTPS inspection (see README)
+certs/*.crt
+
+# Presentation build dependencies
+docs/presentacion/node_modules/
+
+# Office lock files (open documents)
+~$*
