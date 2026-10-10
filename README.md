@@ -7,6 +7,17 @@ Microservicio independiente que forma parte de la visión de *Pets Location* (pr
 
 > Las fotos son reales (DogFaceNet). Los nombres de las mascotas, dueños, collares y ubicaciones son **ficticios**. Es un prototipo académico, no validado para uso real.
 
+## Entregables
+
+| Entregable | Ubicación |
+|---|---|
+| Informe técnico (PDF) | [`docs/informe/informe-tecnico.pdf`](docs/informe/informe-tecnico.pdf) |
+| Presentación (PPTX, con notas del orador) | [`docs/presentacion/presentacion-ml.pptx`](docs/presentacion/presentacion-ml.pptx) |
+| Resultados de evaluación | [`artifacts/metrics.json`](artifacts/metrics.json) y [`figures/`](figures/) |
+| Modelo entrenado | [`artifacts/pca_lda.npz`](artifacts/pca_lda.npz), [`artifacts/siamese_head.weights.h5`](artifacts/siamese_head.weights.h5), [`artifacts/calibration.json`](artifacts/calibration.json) |
+| Dataset seleccionado | [`data/`](data/) (fotos, `manifest.json`, `dataset_info.json`) |
+| Versión final | tag `v1.0` |
+
 ## Resultados principales (prueba: 113 perros nunca vistos, 674 consultas)
 
 | Método | Qué se entrena | Top-1 | Recall@3 | Identificación con umbral | Desconocidos aceptados | ROC-AUC |

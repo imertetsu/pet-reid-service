@@ -9,7 +9,7 @@ const img = (p) => path.join(ROOT, "data", p);
 const OUT = path.join(__dirname, "presentacion-ml.pptx");
 
 // Replace with the GitHub URL once the repository is published
-const REPO_URL = "Repositorio: pet-reid-service (enlace en la entrega)";
+const REPO_URL = "github.com/imertetsu/pet-reid-service";
 
 // Palette: deep pine (dominant), mint-gray surfaces and an amber accent
 const THEME = {
